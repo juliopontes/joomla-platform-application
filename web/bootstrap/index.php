@@ -20,8 +20,8 @@ define('JPATH_LIBRARIES', __DIR__.'/libraries');
 
 // Increase error reporting to that any errors are displayed.
 // Note, you would not use these settings in production.
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 
 // Bootstrap the application.
 require dirname(dirname(__DIR__)).'/bootstrap.php';
@@ -35,7 +35,7 @@ require_once JPATH_LIBRARIES.'/manager/application/module/helper.php';
 JLoader::import('manager.application.application', JPATH_LIBRARIES);
 JLoader::import('manager.application.web', JPATH_LIBRARIES);
 JLoader::import('manager.toolbar.helper', JPATH_LIBRARIES);
-
+JLoader::import('manager.version.version', JPATH_LIBRARIES);
 
 final class JBootsrap extends JApplicationWeb
 {
@@ -175,9 +175,6 @@ final class JBootsrap extends JApplicationWeb
 		
 		//our application class
 		require_once JPATH_APPS.'/'.$appName.'/application.php';
-		
-		//reset instance from JApplicationWeb class
-		self::$instance = null;
 
 		$application = JApplicationWeb::getInstance($appName);
 	
@@ -192,4 +189,5 @@ final class JBootsrap extends JApplicationWeb
 	}
 }
 
-JApplicationWeb::getInstance('JBootsrap')->execute();
+$bootstrap = new JBootsrap();
+$bootstrap->execute();

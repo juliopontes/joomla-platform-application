@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Import dependancies.
-jimport('joomla.html.toolbar');
+jimport('legacy.toolbar.toolbar');
 
 // Get the toolbar.
 $toolbar = JToolBar::getInstance('toolbar')->render('toolbar');

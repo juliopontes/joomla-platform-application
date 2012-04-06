@@ -61,8 +61,14 @@ class Manager extends CoreApplicationWeb
 	{
 		//import toolbar
 		jimport('legacy.toolbar.toolbar');
-		JLoader::register('JToolbar', JPATH_LIBRARIES.'/core/toolbar/helper.php');
+		JLoader::register('JToolBarHelper', JPATH_LIBRARIES.'/core/toolbar/helper.php');
 		
 		parent::doExecute();
+		
+		//add custom template page to theme
+		if ($this->component == 'com_login')
+		{
+			$this->_themeCustomLayout['com_login'] = 'login.php';
+		}
 	}
 }

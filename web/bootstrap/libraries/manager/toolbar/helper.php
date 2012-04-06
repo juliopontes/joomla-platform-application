@@ -7,6 +7,9 @@
 // No direct access
 defined('_JEXEC') or die;
 
+jimport('legacy.toolbar.button');
+jimport('legacy.toolbar.toolbar');
+jimport('legacy.help.help');
 jimport('joomla.html.toolbar');
 
 /**

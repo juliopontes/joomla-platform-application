@@ -26,7 +26,7 @@ final class JConfig
 	//default component
 	public $default_option = 'com_login';
 	//theme
-	public $theme = 'manager';
+	public $theme = 'bluestork';
 	//database options
 	public $dbtype = 'mysql';
 	public $host = 'localhost';

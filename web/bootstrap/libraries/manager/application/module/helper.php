@@ -152,13 +152,13 @@ abstract class JModuleHelper
 		// Get module path
 		$module->module = preg_replace('/[^A-Z0-9_\.-]/i', '', $module->module);
 		$path = JPATH_BASE . '/modules/' . $module->module . '/' . $module->module . '.php';
-
+		
 		// Load the module
 		// $module->user is a check for 1.0 custom modules and is deprecated refactoring
 		if (empty($module->user) && file_exists($path))
 		{
 			$lang = JFactory::getLanguage();
-
+			
 			// 1.5 or Core then 1.6 3PD
 			$lang->load($module->module, JPATH_BASE, null, false, false) ||
 				$lang->load($module->module, dirname($path), null, false, false) ||

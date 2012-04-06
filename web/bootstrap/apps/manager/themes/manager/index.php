@@ -31,8 +31,9 @@ defined('_JEXEC') or die;
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <a class="brand" href="<?php echo JRoute::_('index.php?option=com_dashboard'); ?>">Cloud Control Panel</a>
+          <a class="brand" href="<?php echo JRoute::_('index.php?option=com_dashboard'); ?>">Joomla! Application Manager</a>
           <jdoc:include type="modules" name="top" style="none" />
+          <jdoc:include type="module" name="mod_login" style="none" />
         </div>
       </div>
     </div>

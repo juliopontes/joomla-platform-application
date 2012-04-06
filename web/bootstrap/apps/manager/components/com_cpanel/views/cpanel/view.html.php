@@ -29,7 +29,7 @@ class CpanelViewCpanel extends JView
 		// Set toolbar items for the page
 		JToolBarHelper::title(JText::_('COM_CPANEL'), 'cpanel.png');
 		JToolBarHelper::help('screen.cpanel');
-
+		
 		/*
 		 * Set the template - this will display cpanel.php
 		 * from the selected admin template.

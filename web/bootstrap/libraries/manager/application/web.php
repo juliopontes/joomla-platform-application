@@ -12,6 +12,16 @@ abstract class CoreApplicationWeb extends JApplicationWeb
 	 */
 	protected $_autoassign = true;
 
+	protected $_themeCustomLayout = array();
+
+	/**
+	 * The application message queue.
+	 *
+	 * @var    array
+	 * @since  11.1
+	 */
+	protected $messageQueue = array();
+
 	/**
 	 * Return name of application
 	 */
@@ -250,17 +260,115 @@ abstract class CoreApplicationWeb extends JApplicationWeb
 			
 			//load library language
 			$this->language->load('lib_joomla');
+			//set factory language
+			JFactory::$language = $this->language;
 			
 			$this->router = new JRouter();
 			
 			$name = $this->getName();
-			$component = $this->input->get('option',$this->get('default_option',null));
+			$this->component = $this->input->get('option',$this->get('default_option',null));
 			
-			$output = JComponentHelper::renderComponent($component);
+			$output = JComponentHelper::renderComponent($this->component);
 			
 			$this->document->application = $this->getClient()->name;
 			$this->document->setBuffer($output,array('type' => 'component', 'name' => 'main', 'title' => ''));
 		}
+	}
+
+/**
+	 * Enqueue a system message.
+	 *
+	 * @param   string  $msg   The message to enqueue.
+	 * @param   string  $type  The message type. Default is message.
+	 *
+	 * @return  void
+	 *
+	 * @since   11.1
+	 */
+	public function enqueueMessage($msg, $type = 'message')
+	{
+		// For empty queue, if messages exists in the session, enqueue them first.
+		if (!count($this->messageQueue))
+		{
+			$session = JFactory::getSession();
+			$sessionQueue = $session->get('application.queue');
+
+			if (count($sessionQueue))
+			{
+				$this->messageQueue = $sessionQueue;
+				$session->set('application.queue', null);
+			}
+		}
+
+		// Enqueue the message.
+		$this->messageQueue[] = array('message' => $msg, 'type' => strtolower($type));
+	}
+
+	/**
+	 * Get the system message queue.
+	 *
+	 * @return  array  The system message queue.
+	 *
+	 * @since   11.1
+	 */
+	public function getMessageQueue()
+	{
+		// For empty queue, if messages exists in the session, enqueue them.
+		if (!count($this->messageQueue))
+		{
+			$session = JFactory::getSession();
+			$sessionQueue = $session->get('application.queue');
+
+			if (count($sessionQueue))
+			{
+				$this->messageQueue = $sessionQueue;
+				$session->set('application.queue', null);
+			}
+		}
+
+		return $this->messageQueue;
+	}
+
+	/**
+	 * Rendering is the process of pushing the document buffers into the template
+	 * placeholders, retrieving data from the document and pushing it into
+	 * the application response buffer.
+	 *
+	 * @return  void
+	 *
+	 * @since   11.3
+	 */
+	protected function render()
+	{
+		// Setup the document options.
+		$options = array(
+			'template' => $this->get('theme'),
+			'file' => 'index.php',
+			'params' => new JRegistry()
+		);
+	
+		if (!empty($this->_themeCustomLayout[$this->component]))
+		{
+			$options['file'] = $this->_themeCustomLayout[$this->component];
+		}
+
+		if ($this->get('themes.base'))
+		{
+			$options['directory'] = $this->get('themes.base');
+		}
+		// Fall back to constants.
+		else
+		{
+			$options['directory'] = (defined('JPATH_BASE') ? JPATH_BASE : __DIR__) . '/themes';
+		}
+		
+		// Parse the document.
+		$this->document->parse($options);
+		// Render the document.
+		$data = $this->document->render($this->get('cache_enabled'), $options);
+
+		// Set the application output data.
+		$this->setBody($data);
 	}
 
 	/**
@@ -435,6 +543,20 @@ abstract class CoreApplicationWeb extends JApplicationWeb
 		$this->triggerEvent('onUserLogoutFailure', array($parameters));
 
 		return false;
+	}
+
+	/**
+	 * Provides a secure hash based on a seed
+	 *
+	 * @param   string  $seed  Seed string.
+	 *
+	 * @return  string  A secure hash
+	 *
+	 * @since   11.1
+	 */
+	public static function getHash($seed)
+	{
+		return md5($this->get('secret') . $seed);
 	}
 
 	/**
